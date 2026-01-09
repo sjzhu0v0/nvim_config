@@ -22,18 +22,28 @@ vim.api.nvim_create_user_command("Scratch", function(opts)
   end
 end, { nargs = "?" })
 
+-- vim.g.clipboard = {
+--   name = 'win32yank',
+--   copy = {
+--     ['+'] = 'win32yank.exe -i --crlf',
+--     ['*'] = 'win32yank.exe -i --crlf',
+--   },
+--   paste = {
+--     ['+'] = 'win32yank.exe -o --lf',
+--     ['*'] = 'win32yank.exe -o --lf',
+--   },
+--   cache_enabled = 0,
+-- }
 
-
--- 设置 provider（如果 Neovim 没有自动识别）
 vim.g.clipboard = {
-  name = 'win32yank',
+  name = 'xclip',
   copy = {
-    ['+'] = 'win32yank.exe -i --crlf',
-    ['*'] = 'win32yank.exe -i --crlf',
+    ['+'] = 'xclip -selection clipboard',
+    ['*'] = 'xclip -selection primary',
   },
   paste = {
-    ['+'] = 'win32yank.exe -o --lf',
-    ['*'] = 'win32yank.exe -o --lf',
+    ['+'] = 'xclip -selection clipboard -o',
+    ['*'] = 'xclip -selection primary -o',
   },
   cache_enabled = 0,
 }
@@ -118,3 +128,7 @@ vim.api.nvim_set_keymap('t', '<Esc><Esc>', '<C-\\><C-n>', {noremap = true})
 
 -- Or if you prefer single Escape but want to ensure it works:
 vim.api.nvim_set_keymap('t', '<Esc>', '<C-\\><C-n>', {noremap = true})
+
+-- Still need to use vim.cmd for cabbrev
+vim.cmd.cnoreabbrev('vsb vertical sbuffer')
+vim.cmd.cnoreabbrev('sb sbuffer')
