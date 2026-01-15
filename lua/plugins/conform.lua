@@ -40,5 +40,22 @@ return {
       lsp_fallback = true,
     },
   },
+  keys = {
+    {
+      "<leader>f",
+      function()
+        require("conform").format()
+      end,
+      mode = "n",
+      desc = "Format buffer",
+    },
+    {
+      "<leader>f",
+      function()
+        require("conform").format({ mode = "v" })
+      end,
+      mode = "v",
+      desc = "Format selection",
+    },
+  },
 }
-

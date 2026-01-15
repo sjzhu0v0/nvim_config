@@ -12,6 +12,7 @@ vim.opt.clipboard = "unnamedplus"  -- 将默认寄存器映射到系统剪贴板
 vim.keymap.set("n", "gp", "`[v`]", { desc = "Select last pasted text" })
 
 
+
 vim.api.nvim_create_user_command("Scratch", function(opts)
   vim.cmd("enew")
   vim.bo.buftype = "nofile"
@@ -42,8 +43,8 @@ vim.g.clipboard = {
     ['*'] = 'xclip -selection primary',
   },
   paste = {
-    ['+'] = 'xclip -selection clipboard -o',
-    ['*'] = 'xclip -selection primary -o',
+    ['+'] = 'xclip -selection clipboard -o | perl -pe \'chomp if eof\'',
+    ['*'] = 'xclip -selection primary -o | perl -pe \'chomp if eof\'',
   },
   cache_enabled = 0,
 }
@@ -66,14 +67,21 @@ vim.opt.rtp:prepend(lazypath)
 
 -- 启动 lazy.nvim
 require("lazy").setup({
-  {
-    "github/copilot.vim",
-  },
+ {
+   "github/copilot.vim",
+ },
   require("plugins/telescope"),
   require("plugins/neo-tree"),
   require("plugins/auto-session"),
   require("plugins/tree-sitter"),
   require("plugins/conform"),
+  {
+    "numToStr/Comment.nvim",
+    event = "VeryLazy",
+    config = function()
+      require("Comment").setup()
+    end,
+  },
 })
 
 vim.api.nvim_create_autocmd('FileType', {
@@ -107,9 +115,15 @@ require("nvim-treesitter.configs").setup({
   },
 })
 
-vim.keymap.set("n", "<leader>f", function()
-  require("conform").format({ async = true })
-end)
+-- 自动在 terminal buffer 调整大小时发送 SIGWINCH
+vim.api.nvim_create_autocmd("TermOpen", {
+  pattern = "*",
+  callback = function()
+    vim.opt_local.signcolumn = "no"
+    vim.opt_local.number = false
+    vim.opt_local.relativenumber = false
+  end,
+})
 
 vim.opt.foldmethod = 'expr'
 vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
