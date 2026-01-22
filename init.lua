@@ -74,13 +74,18 @@ require("lazy").setup({
   require("plugins/neo-tree"),
   require("plugins/auto-session"),
   require("plugins/tree-sitter"),
+  require("plugins/bufferline"),
   require("plugins/conform"),
+  -- require("plugins/cmp"),
   {
     "numToStr/Comment.nvim",
     event = "VeryLazy",
     config = function()
       require("Comment").setup()
     end,
+  },
+  {
+    "neovim/nvim-lspconfig",
   },
 })
 
@@ -146,3 +151,7 @@ vim.api.nvim_set_keymap('t', '<Esc>', '<C-\\><C-n>', {noremap = true})
 -- Still need to use vim.cmd for cabbrev
 vim.cmd.cnoreabbrev('vsb vertical sbuffer')
 vim.cmd.cnoreabbrev('sb sbuffer')
+
+
+vim.lsp.enable('pyright')
+vim.lsp.enable('clangd')
