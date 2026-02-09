@@ -67,25 +67,51 @@ vim.opt.rtp:prepend(lazypath)
 
 -- 启动 lazy.nvim
 require("lazy").setup({
+ -- {
+ --   "github/copilot.vim",
+ -- },
  {
-   "github/copilot.vim",
+   "subnut/nvim-ghost.nvim"
  },
   require("plugins/telescope"),
+  require("plugins/lualine"),
   require("plugins/neo-tree"),
   require("plugins/auto-session"),
   require("plugins/tree-sitter"),
-  require("plugins/bufferline"),
+  -- require("plugins/bufferline"),
   require("plugins/conform"),
+  require("plugins/avante"),
   -- require("plugins/cmp"),
+  -- {
+  --   "numToStr/Comment.nvim",
+  --   event = "VeryLazy",
+  --   config = function()
+  --     require("Comment").setup()
+  --   end,
+  -- },
   {
-    "numToStr/Comment.nvim",
-    event = "VeryLazy",
+    "williamboman/mason.nvim",
+    build = ":MasonUpdate",
     config = function()
-      require("Comment").setup()
+      require("mason").setup()
+    end,
+  },
+  {
+    "williamboman/mason-lspconfig.nvim",
+    dependencies = { "williamboman/mason.nvim" },
+    config = function()
+      require("mason-lspconfig").setup({
+        ensure_installed = {
+          "ltex",
+        },
+      })
     end,
   },
   {
     "neovim/nvim-lspconfig",
+    dependencies = {
+      "williamboman/mason-lspconfig.nvim",
+    },
   },
 })
 
@@ -130,6 +156,12 @@ vim.api.nvim_create_autocmd("TermOpen", {
   end,
 })
 
+-- require("ghosttext_ltex").setup {
+--   shadow_file = "~/content.txt",
+--   filetype = "markdown",
+-- }
+
+
 vim.opt.foldmethod = 'expr'
 vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
 vim.opt.foldlevel = 99
@@ -155,3 +187,65 @@ vim.cmd.cnoreabbrev('sb sbuffer')
 
 vim.lsp.enable('pyright')
 vim.lsp.enable('clangd')
+vim.lsp.enable('pylsp')
+
+-- LSP 快捷键设置示例
+local opts = { noremap = true, silent = true }
+vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+vim.keymap.set('n', 'gD', vim.lsp.buf.type_definition, opts)
+vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+vim.keymap.set('n', '<F2>', vim.lsp.buf.rename, opts)
+vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
+vim.keymap.set('n', '<F1>', vim.lsp.buf.hover, opts)
+
+-- 诊断导航
+vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
+vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
+vim.keymap.set('n', 'gl', vim.diagnostic.open_float, opts)
+
+vim.lsp.config("ltex", {
+  cmd = { "ltex-ls" },
+
+  autostart = true, -- ⭐手动开关
+
+  settings = {
+    ltex = {
+      language = "en-US",
+      checkFrequency = "edit",
+
+      additionalRules = {
+        enablePickyRules = true,
+      },
+
+      completionEnabled = true,
+
+      latex = {
+        environments = {
+          "equation",
+          "align",
+          "gather",
+          "multline",
+          "eqnarray",
+          "split",
+        },
+      },
+
+      dictionary = {
+        ["en-US"] = {
+          "QGP", "hydrodynamics", "anisotropic",
+          "multiplicity", "pseudorapidity",
+          "CMS", "ATLAS", "ALICE", "LHC",
+          "PbPb", "pPb", "pp",
+        },
+      },
+    },
+  },
+})
+
+-- 使用 silent! 的完整版本
+vim.keymap.set('n', '<leader>bo', '<cmd>silent! %bd|e#<CR>', {
+  desc = 'Close all other buffers',
+  noremap = true,
+  silent = true,
+})

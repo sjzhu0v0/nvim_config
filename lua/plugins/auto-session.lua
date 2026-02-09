@@ -27,8 +27,8 @@ return {
       auto_save_enabled = true,
       auto_restore_enabled = should_auto_restore, -- 👈 动态控制
       suppressed_dirs = {
-        "～",
-        "～/Downloads",
+        "~",
+        "~/Downloads",
         "/tmp",
       },
       session_lens = {

@@ -49,7 +49,6 @@ return {
         width = 30,
         mappings = {
           ["<CR>"] = "open",
-          ["o"] = "open",
           ["v"] = "open_vsplit",
           ["s"] = "open_split",
           ["t"] = "open_tabnew",
@@ -61,6 +60,10 @@ return {
           ["r"] = "rename",
           ["C"] = "set_root",
           ["U"] = "navigate_up",
+          ["P"] = function(state)
+            local node = state.tree:get_node()
+            vim.fn.jobstart({ "xdg-open", node:get_id() }, { detach = true })
+          end
         },
       },
 
