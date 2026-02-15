@@ -44,6 +44,34 @@ return {
           },
         },
       },
+      filesystem = {
+        follow_current_file = { enabled = true },
+        hijack_netrw_behavior = "open_default",
+        use_libuv_file_watcher = true,
+        commands = {
+            avante_add_files = function(state)
+              local node = state.tree:get_node()
+              local filepath = node:get_id()
+              local relative_path = require('avante.utils').relative_path(filepath)
+
+              local sidebar = require('avante').get()
+
+              local open = sidebar:is_open()
+              -- ensure avante sidebar is open
+              if not open then
+                require('avante.api').ask()
+                sidebar = require('avante').get()
+              end
+
+              sidebar.file_selector:add_selected_file(relative_path)
+
+              -- remove neo tree buffer
+              if not open then
+                sidebar.file_selector:remove_selected_file('neo-tree filesystem [1]')
+              end
+            end,
+        },
+      },
       window = {
         position = "left",
         width = 30,
@@ -63,14 +91,9 @@ return {
           ["P"] = function(state)
             local node = state.tree:get_node()
             vim.fn.jobstart({ "xdg-open", node:get_id() }, { detach = true })
-          end
+          end,
+          ['oa'] = 'avante_add_files',
         },
-      },
-
-      filesystem = {
-        follow_current_file = { enabled = true },
-        hijack_netrw_behavior = "open_default",
-        use_libuv_file_watcher = true,
       },
     })
   end,
